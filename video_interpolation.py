@@ -18,7 +18,7 @@ def _process_video(input_path, output_path, frame_rate, crf, preset):
         print(f"Error processing video {input_path}: {e}")
 
 
-def interpolate_videos(
+def interpolate(
         input_folder, output_folder, frame_rate=32,
         crf=18, preset='veryslow'):
     """Video interpolation using ffmpeg.
