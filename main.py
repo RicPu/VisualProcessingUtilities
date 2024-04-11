@@ -1,25 +1,41 @@
 import os
-import cv2
 import subprocess
-from matplotlib import pyplot as plt
 
-def process_video(input_path: str, output_path: str, frame_rate=32, crf=18, preset='veryslow'):
 
-    cap = cv2.VideoCapture(input_path)
-    ret, frame = cap.read()
-    cap.release()
+def _process_video(input_path, output_path, frame_rate, crf, preset):
+    try:
+        command = [
+            'ffmpeg', '-i', str(input_path),
+            '-vf', f'minterpolate=fps={frame_rate}',
+            '-c:v', 'libx264', '-crf', str(crf),
+            '-preset', preset, str(output_path)
+        ]
+        subprocess.run(
+            command, stdout=subprocess.DEVNULL,
+            shell=True, check=True
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"Error processing video {input_path}: {e}")
 
-    plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-    plt.title(f"{os.path.basename(input_path)}")
-    plt.axis('off')
-    plt.xticks([]), plt.yticks([])
-    plt.show()
 
-    command = f'ffmpeg -i "{input_path}" -vf "minterpolate=fps={frame_rate}" -c:v libx264 -crf {crf} -preset {preset} "{output_path}"'
-    subprocess.run(command, stdout=subprocess.DEVNULL, shell=True, check=True)
+def interpolate_videos(
+        input_folder, output_folder, frame_rate=32,
+        crf=18, preset='veryslow'):
+    """Video interpolation using ffmpeg.
 
-def interpolate_videos(input_folder, output_folder, frame_rate=32, crf=18, preset='veryslow'):
-
+    Args:
+        input_folder (str): The path to the folder containing input videos.
+        output_folder (str): The path to the folder where processed videos
+            will be saved.
+        frame_rate (int, optional): The desired frame rate of the output
+            videos. Defaults to 32.
+        crf (int, optional): Constant Rate Factor for video compression.
+            A lower value results in better quality but larger file sizes.
+            Defaults to 18.
+        preset (str, optional): Preset for x264 encoder.
+            A slower preset provides better compression and quality.
+            Defaults to 'veryslow'.
+    """
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
@@ -28,4 +44,10 @@ def interpolate_videos(input_folder, output_folder, frame_rate=32, crf=18, prese
         output_path = os.path.join(output_folder, file_name)
 
         if os.path.isfile(input_path):
-            process_video(input_path, output_path, frame_rate, crf, preset)
+            try:
+                _process_video(
+                    input_path, output_path,
+                    frame_rate, crf, preset
+            )
+            except Exception as e:
+                print(f"Error processing video {input_path}: {e}")
