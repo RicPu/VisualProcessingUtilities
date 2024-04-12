@@ -13,6 +13,8 @@ from image_border_cropper import crop_image
 cropped_image = crop_image('input_image_path.png', 'output_image_path.png')
 ```
 
+![Example Image](examples/smart_cropping.png)
+
 ### Interpolation with FFmpeg
 This Python script provides functionality to interpolate videos using FFmpeg, a powerful multimedia processing tool. This script is particularly useful when you have a folder of videos to interpolate all in the same manner. Simply specify the input folder containing your videos and the output folder where the processed videos will be saved, and the script will take care of the rest. Adjust the parameters (frame_rate, crf, preset) according to your specific requirements for video interpolation. Ensure FFmpeg is properly installed and accessible for the script to function correctly.
 
