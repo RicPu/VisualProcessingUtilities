@@ -5,7 +5,7 @@ import subprocess
 def _process_video(input_path, output_path, frame_rate, crf, preset):
     try:
         command = [
-            'ffmpeg', '-i', str(input_path),
+            '!ffmpeg', '-i', str(input_path),
             '-vf', f'minterpolate=fps={frame_rate}',
             '-c:v', 'libx264', '-crf', str(crf),
             '-preset', preset, str(output_path)
