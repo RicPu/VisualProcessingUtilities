@@ -8,7 +8,7 @@ This Python script provides a function to crop images and remove surrounding whi
 **Usage**
 
 ``` python
-from image_border_cropper import crop_image
+from smart_cropping import crop_image
 
 cropped_image = crop_image('input_image_path.png', 'output_image_path.png')
 ```
