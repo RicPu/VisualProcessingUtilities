@@ -76,9 +76,14 @@ def _validate_input(img_path, output_path, margin):
     if not os.path.isfile(img_path):
         raise FileNotFoundError(f'The file {img_path} does not exist.')
 
-    if (output_path is not None and
-        not os.path.isdir(os.path.dirname(output_path))):
-        raise FileNotFoundError('The directory does not exist.')
+    if output_path is not None:
+        if os.path.isdir(output_path):
+            output_dir = output_path
+        else:
+            output_dir = os.path.dirname(output_path)
+
+        if not os.path.isdir(output_dir):
+            raise FileNotFoundError(f'The directory {output_dir} does not exist.')
 
     if not isinstance(margin, int) or margin < 0:
         raise ValueError('Margin must be a non-negative integer.')
@@ -108,7 +113,7 @@ def _calculate_borders(gray_image, non_white_pixels):
 
 def _crop_and_visualize(image, borders, margin, output_path):
     """ Crop the image based on detected borders, add a margin, and visualize
-            the result.
+    the result.
 
     This function crops the input image based on the detected borders and adds
     a margin around the cropped region. It then visualizes the original image
@@ -134,8 +139,7 @@ def _crop_and_visualize(image, borders, margin, output_path):
         y_top:y_bottom, x_left:x_right
     ]
 
-    output_path = output_path or 'output_images/cropped_image.jpg'
-    output_path = output_path if '' in output_path else output_path
+    output_path = output_path or 'cropped_image.png'
     cv2.imwrite(output_path, padded_image)
 
     _visualize_images(image, borders, padded_image)
@@ -193,3 +197,7 @@ def crop_image(img_path, output_path=None, margin=10, threshold=255):
     except Exception as e:
         print(f'Error during cropping: {e}')
         return None
+
+
+if __name__ == "__main__":
+    cropped_image = crop_image('img.png')
