@@ -6,12 +6,13 @@ import matplotlib.pyplot as plt
 
 class NoBordersDetectedError(Exception):
 
-    def suggest_resolution(self):
+    @staticmethod
+    def suggest_resolution():
         return 'Consider adjusting the threshold parameter to a lower value. \
             The default background color is 255 (white).'
 
 
-def _find_border(gray_image, direction, non_white_pixels):
+def _find_border(direction, non_white_pixels):
     """ Find the border coordinates in the specified direction.
 
     This function finds the border coordinates in the specified direction based
@@ -89,7 +90,7 @@ def _validate_input(img_path, output_path, margin):
         raise ValueError('Margin must be a non-negative integer.')
 
 
-def _calculate_borders(gray_image, non_white_pixels):
+def _calculate_borders(non_white_pixels):
     """ Calculate the borders of non-white regions in the image.
 
     This function determines the borders of non-white regions in the provided
@@ -101,7 +102,7 @@ def _calculate_borders(gray_image, non_white_pixels):
     directions = ['left', 'right', 'top', 'bottom']
     for direction in directions:
         borders[direction] = _find_border(
-            gray_image, direction, non_white_pixels
+            direction, non_white_pixels
         )
     return borders
 
@@ -174,7 +175,7 @@ def crop_image(img_path, output_path=None, margin=10, threshold=255):
         image = cv2.imread(img_path)
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         non_bg_pixels = np.where(gray_image < threshold)
-        borders = _calculate_borders(gray_image, non_bg_pixels)
+        borders = _calculate_borders(non_bg_pixels)
 
         if all(borders.values()):
             return _crop_and_visualize(image, borders, margin, output_path)
@@ -195,4 +196,4 @@ def crop_image(img_path, output_path=None, margin=10, threshold=255):
 
 
 if __name__ == "__main__":
-    cropped_image = crop_image('image.png')
+    final_image = crop_image('image.png')
