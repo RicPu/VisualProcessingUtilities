@@ -89,11 +89,6 @@ def _validate_input(img_path, output_path, margin):
         raise ValueError('Margin must be a non-negative integer.')
 
 
-def _get_non_white_pixels(gray_image, threshold):
-
-    return np.where(gray_image < threshold)
-
-
 def _calculate_borders(gray_image, non_white_pixels):
     """ Calculate the borders of non-white regions in the image.
 
@@ -178,8 +173,8 @@ def crop_image(img_path, output_path=None, margin=10, threshold=255):
 
         image = cv2.imread(img_path)
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        non_white_pixels = _get_non_white_pixels(gray_image, threshold)
-        borders = _calculate_borders(gray_image, non_white_pixels)
+        non_bg_pixels = np.where(gray_image < threshold)
+        borders = _calculate_borders(gray_image, non_bg_pixels)
 
         if all(borders.values()):
             return _crop_and_visualize(image, borders, margin, output_path)
@@ -200,4 +195,4 @@ def crop_image(img_path, output_path=None, margin=10, threshold=255):
 
 
 if __name__ == "__main__":
-    cropped_image = crop_image('img.png')
+    cropped_image = crop_image('image.png')
