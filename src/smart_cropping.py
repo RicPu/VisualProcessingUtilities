@@ -196,4 +196,4 @@ def crop_image(img_path, output_path=None, margin=10, threshold=255):
 
 
 if __name__ == "__main__":
-    final_image = crop_image('image.png')
+    final_image = crop_image('src\image.png')
